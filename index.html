@@ -502,6 +502,10 @@
                 
                 <div id="credentialsSaved" class="credentials-saved hidden">
                     ✅ Credentials saved! Ready to import projects.
+                    <div style="margin-top: 15px; display: flex; gap: 10px; justify-content: center;">
+                        <button class="btn btn-secondary" onclick="exportCredentials()" style="font-size: 0.9em; padding: 8px 16px;">📤 Export Credentials</button>
+                        <button class="btn btn-secondary" onclick="importCredentials()" style="font-size: 0.9em; padding: 8px 16px;">📥 Import Credentials</button>
+                    </div>
                 </div>
             </div>
 
@@ -683,6 +687,71 @@
             document.getElementById('airtableImportSection').classList.remove('hidden');
             
             initializeAirtable();
+        }
+
+        // Export credentials to file
+        function exportCredentials() {
+            if (!airtableConfig) {
+                alert('No credentials to export. Please save credentials first.');
+                return;
+            }
+
+            const data = {
+                version: '1.0',
+                exported: new Date().toISOString(),
+                credentials: airtableConfig,
+                note: 'BCG Research Report Generator - Airtable Credentials. Keep this file secure!'
+            };
+
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'airtable-credentials-bcg-report-generator.json';
+            a.click();
+            
+            alert('✅ Credentials exported!\n\n⚠️ Keep this file secure - it contains your Airtable access token.\n\nUse "Import Credentials" on other devices to quickly set up the tool.');
+        }
+
+        // Import credentials from file
+        function importCredentials() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            input.onchange = function(e) {
+                const file = e.target.files[0];
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        const data = JSON.parse(e.target.result);
+                        
+                        // Validate the file structure
+                        if (!data.credentials || !data.credentials.token || !data.credentials.baseId) {
+                            alert('❌ Invalid credentials file. Please use a file exported from this tool.');
+                            return;
+                        }
+
+                        // Save the credentials
+                        airtableConfig = data.credentials;
+                        localStorage.setItem('airtableCredentials', JSON.stringify(airtableConfig));
+                        
+                        // Update UI
+                        document.getElementById('airtableToken').value = airtableConfig.token;
+                        document.getElementById('airtableBaseId').value = airtableConfig.baseId;
+                        document.getElementById('credentialsSaved').classList.remove('hidden');
+                        document.getElementById('airtableImportSection').classList.remove('hidden');
+                        
+                        // Initialize Airtable connection
+                        initializeAirtable();
+                        
+                        alert('✅ Credentials imported successfully!\n\nYou can now import projects from Airtable.');
+                    } catch (error) {
+                        alert('❌ Error reading credentials file: ' + error.message);
+                    }
+                };
+                reader.readAsText(file);
+            };
+            input.click();
         }
 
         // Airtable API functions
