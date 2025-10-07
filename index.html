@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BCG Research Report Generator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1em;
+        }
+
+        .mode-selector {
+            display: flex;
+            gap: 20px;
+            padding: 30px;
+            background: #f8f9fa;
+            border-bottom: 2px solid #dee2e6;
+        }
+
+        .mode-card {
+            flex: 1;
+            background: white;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            padding: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .mode-card:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+        }
+
+        .mode-card.active {
+            border-color: #667eea;
+            background: #f0f4ff;
+        }
+
+        .mode-card h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 1.3em;
+        }
+
+        .mode-card p {
+            color: #6c757d;
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+
+        .main-content {
+            padding: 30px;
+        }
+
+        .section {
+            margin-bottom: 30px;
+            padding: 25px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .section-header h2 {
+            color: #2c3e50;
+            font-size: 1.5em;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #2c3e50;
+            font-weight: 600;
+            font-size: 0.95em;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #dee2e6;
+            border-radius: 6px;
+            font-size: 1em;
+            font-family: inherit;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-icon {
+            padding: 10px;
+            width: 40px;
+            height: 40px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .session-list {
+            margin-top: 20px;
+        }
+
+        .session-item {
+            background: white;
+            padding: 20px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            border: 2px solid #dee2e6;
+            transition: all 0.3s ease;
+        }
+
+        .session-item:hover {
+            border-color: #667eea;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .session-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .session-date {
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 1.1em;
+        }
+
+        .session-hours {
+            background: #667eea;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 600;
+        }
+
+        .session-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+
+        .session-detail {
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 4px;
+        }
+
+        .session-detail strong {
+            display: block;
+            color: #6c757d;
+            font-size: 0.85em;
+            margin-bottom: 4px;
+        }
+
+        .session-detail span {
+            color: #2c3e50;
+            font-size: 0.95em;
+        }
+
+        .hours-tracker {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .hours-tracker h3 {
+            font-size: 1.2em;
+            margin-bottom: 10px;
+            opacity: 0.9;
+        }
+
+        .hours-display {
+            font-size: 3em;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .hours-status {
+            font-size: 0.95em;
+            opacity: 0.9;
+        }
+
+        .hours-status.warning {
+            background: rgba(255, 193, 7, 0.2);
+            padding: 8px 16px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-top: 10px;
+        }
+
+        .hours-status.success {
+            background: rgba(40, 167, 69, 0.2);
+            padding: 8px 16px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-top: 10px;
+        }
+
+        .airtable-setup {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .airtable-setup h3 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+
+        .airtable-setup p {
+            color: #856404;
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .gps-checklist {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .gps-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            margin-bottom: 10px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+
+        .gps-item.complete {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+        }
+
+        .gps-item input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .export-section {
+            background: #e7f5ff;
+            border: 2px solid #339af0;
+            border-radius: 8px;
+            padding: 25px;
+            text-align: center;
+        }
+
+        .export-section h3 {
+            color: #1864ab;
+            margin-bottom: 15px;
+        }
+
+        .export-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        @media print {
+            body {
+                background: white;
+            }
+            .mode-selector,
+            .btn,
+            .export-section {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📋 BCG Research Report Generator</h1>
+            <p>Board for Certification of Genealogists - Compliant Research Documentation</p>
+        </div>
+
+        <!-- Mode Selection -->
+        <div class="mode-selector">
+            <div class="mode-card active" id="manualMode" onclick="selectMode('manual')">
+                <h3>✍️ Manual Entry</h3>
+                <p>Enter research sessions manually. Perfect for retrospective documentation or projects not tracked in Airtable.</p>
+            </div>
+            <div class="mode-card" id="airtableMode" onclick="selectMode('airtable')">
+                <h3>🔗 Import from Airtable</h3>
+                <p>Connect to your Airtable Research Log and automatically import all sessions for a project.</p>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <!-- Airtable Setup (hidden by default) -->
+            <div id="airtableSetup" class="airtable-setup hidden">
+                <h3>🔑 Airtable API Setup</h3>
+                <p>To import from Airtable, you need to provide your API credentials. This is a one-time setup and your credentials are stored locally in your browser.</p>
+                <div class="form-group">
+                    <label>Personal Access Token:</label>
+                    <input type="password" id="airtableToken" placeholder="pat...">
+                </div>
+                <div class="form-group">
+                    <label>Base ID:</label>
+                    <input type="text" id="airtableBaseId" placeholder="app...">
+                </div>
+                <button class="btn btn-primary" onclick="saveAirtableCredentials()">💾 Save Credentials</button>
+                <button class="btn btn-secondary" onclick="showSetupGuide()">📖 Setup Guide</button>
+            </div>
+
+            <!-- Section 1: Project Information -->
+            <div class="section">
+                <div class="section-header">
+                    <h2>1️⃣ Project Information</h2>
+                </div>
+                <div class="form-group">
+                    <label>Research Question:</label>
+                    <textarea id="researchQuestion" placeholder="What is the primary research question this report addresses?"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Client Name:</label>
+                    <input type="text" id="clientName" placeholder="Client name or 'Self' for personal research">
+                </div>
+                <div class="form-group">
+                    <label>Project Start Date:</label>
+                    <input type="date" id="startDate">
+                </div>
+                <div class="form-group">
+                    <label>Background / Known Information:</label>
+                    <textarea id="background" placeholder="What did you know at the start of this research? What previous research has been done?"></textarea>
+                </div>
+            </div>
+
+            <!-- Hours Tracker -->
+            <div class="hours-tracker">
+                <h3>Total Research Hours</h3>
+                <div class="hours-display" id="totalHours">0.0</div>
+                <div class="hours-status" id="hoursStatus">
+                    BCG requires 8-15 hours of documented research
+                </div>
+            </div>
+
+            <!-- Section 2: Research Sessions -->
+            <div class="section">
+                <div class="section-header">
+                    <h2>2️⃣ Research Sessions</h2>
+                    <button class="btn btn-primary" onclick="addSession()">➕ Add Session</button>
+                </div>
+                <div id="sessionsList" class="session-list">
+                    <!-- Sessions will be added here -->
+                </div>
+            </div>
+
+            <!-- Section 3: Source Analysis -->
+            <div class="section">
+                <div class="section-header">
+                    <h2>3️⃣ Source Analysis & Correlation</h2>
+                </div>
+                <div class="form-group">
+                    <label>Source Evaluation:</label>
+                    <textarea id="sourceAnalysis" placeholder="Analyze the sources used in this research. Classify each as original/derivative, primary/secondary information. Discuss reliability and conflicts between sources."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Evidence Correlation:</label>
+                    <textarea id="evidenceCorrelation" placeholder="How do the different sources support or contradict each other? What patterns emerged?"></textarea>
+                </div>
+            </div>
+
+            <!-- Section 4: Conclusions -->
+            <div class="section">
+                <div class="section-header">
+                    <h2>4️⃣ Conclusions & Next Steps</h2>
+                </div>
+                <div class="form-group">
+                    <label>Research Findings:</label>
+                    <textarea id="findings" placeholder="What did this research prove or disprove? What conclusions can you draw?"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Remaining Questions:</label>
+                    <textarea id="remainingQuestions" placeholder="What questions remain unanswered? What uncertainties exist?"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Recommended Next Research:</label>
+                    <textarea id="nextResearch" placeholder="What research steps should be taken next? Which sources should be consulted?"></textarea>
+                </div>
+            </div>
+
+            <!-- GPS Compliance Checklist -->
+            <div class="section">
+                <div class="section-header">
+                    <h2>5️⃣ GPS Compliance Checklist</h2>
+                </div>
+                <div class="gps-checklist">
+                    <div class="gps-item">
+                        <input type="checkbox" id="gps1" onchange="updateGPS()">
+                        <label for="gps1"><strong>Reasonably Exhaustive Research:</strong> Have you conducted thorough research across multiple source types?</label>
+                    </div>
+                    <div class="gps-item">
+                        <input type="checkbox" id="gps2" onchange="updateGPS()">
+                        <label for="gps2"><strong>Complete & Accurate Citations:</strong> Are all sources properly cited using Evidence Explained format?</label>
+                    </div>
+                    <div class="gps-item">
+                        <input type="checkbox" id="gps3" onchange="updateGPS()">
+                        <label for="gps3"><strong>Analysis & Correlation:</strong> Have you analyzed and correlated information from multiple sources?</label>
+                    </div>
+                    <div class="gps-item">
+                        <input type="checkbox" id="gps4" onchange="updateGPS()">
+                        <label for="gps4"><strong>Resolution of Conflicts:</strong> Have you addressed and resolved conflicting evidence?</label>
+                    </div>
+                    <div class="gps-item">
+                        <input type="checkbox" id="gps5" onchange="updateGPS()">
+                        <label for="gps5"><strong>Soundly Written Conclusion:</strong> Does your conclusion logically follow from the evidence presented?</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Export Section -->
+            <div class="export-section">
+                <h3>📄 Export Your Report</h3>
+                <div class="export-buttons">
+                    <button class="btn btn-success" onclick="generateReport()">📋 Preview Report</button>
+                    <button class="btn btn-primary" onclick="exportToWord()">📝 Export to Word</button>
+                    <button class="btn btn-secondary" onclick="saveProject()">💾 Save Project</button>
+                    <button class="btn btn-secondary" onclick="loadProject()">📂 Load Project</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global state
+        let sessions = [];
+        let currentMode = 'manual';
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            loadFromStorage();
+            updateHoursDisplay();
+        });
+
+        // Mode selection
+        function selectMode(mode) {
+            currentMode = mode;
+            document.getElementById('manualMode').classList.toggle('active', mode === 'manual');
+            document.getElementById('airtableMode').classList.toggle('active', mode === 'airtable');
+            document.getElementById('airtableSetup').classList.toggle('hidden', mode === 'manual');
+        }
+
+        // Add research session
+        function addSession() {
+            const session = {
+                id: Date.now(),
+                date: '',
+                hours: 0,
+                repository: '',
+                database: '',
+                searchTerms: '',
+                results: '',
+                notes: '',
+                nextSteps: ''
+            };
+            sessions.push(session);
+            renderSessions();
+            updateHoursDisplay();
+        }
+
+        // Render sessions
+        function renderSessions() {
+            const container = document.getElementById('sessionsList');
+            if (sessions.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #6c757d;">No sessions added yet. Click "Add Session" to begin.</p>';
+                return;
+            }
+
+            container.innerHTML = sessions.map(session => `
+                <div class="session-item" id="session-${session.id}">
+                    <div class="session-header">
+                        <div class="session-date">
+                            <input type="date" value="${session.date}" onchange="updateSession(${session.id}, 'date', this.value)" style="border: none; background: transparent; font-weight: 600; color: #2c3e50; font-size: 1.1em;">
+                        </div>
+                        <div style="display: flex; gap: 10px; align-items: center;">
+                            <div class="session-hours">
+                                <input type="number" step="0.5" value="${session.hours}" onchange="updateSession(${session.id}, 'hours', parseFloat(this.value))" style="width: 60px; border: none; background: transparent; color: white; font-weight: 600; text-align: center;"> hrs
+                            </div>
+                            <button class="btn btn-danger btn-icon" onclick="deleteSession(${session.id})" title="Delete session">🗑️</button>
+                        </div>
+                    </div>
+                    <div class="session-details">
+                        <div class="session-detail">
+                            <strong>Repository:</strong>
+                            <input type="text" value="${session.repository}" onchange="updateSession(${session.id}, 'repository', this.value)" placeholder="e.g., FamilySearch">
+                        </div>
+                        <div class="session-detail">
+                            <strong>Database:</strong>
+                            <input type="text" value="${session.database}" onchange="updateSession(${session.id}, 'database', this.value)" placeholder="e.g., 1940 Census">
+                        </div>
+                        <div class="session-detail">
+                            <strong>Search Terms:</strong>
+                            <input type="text" value="${session.searchTerms}" onchange="updateSession(${session.id}, 'searchTerms', this.value)" placeholder="Keywords used">
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin-top: 15px;">
+                        <strong style="display: block; margin-bottom: 8px; font-size: 0.9em; color: #6c757d;">Results / Findings:</strong>
+                        <textarea onchange="updateSession(${session.id}, 'results', this.value)" placeholder="What did you find (or not find)?">${session.results}</textarea>
+                    </div>
+                    <div class="form-group">
+                        <strong style="display: block; margin-bottom: 8px; font-size: 0.9em; color: #6c757d;">Analysis Notes:</strong>
+                        <textarea onchange="updateSession(${session.id}, 'notes', this.value)" placeholder="Your analysis and observations">${session.notes}</textarea>
+                    </div>
+                    <div class="form-group">
+                        <strong style="display: block; margin-bottom: 8px; font-size: 0.9em; color: #6c757d;">Next Steps:</strong>
+                        <textarea onchange="updateSession(${session.id}, 'nextSteps', this.value)" placeholder="What to research next">${session.nextSteps}</textarea>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Update session
+        function updateSession(id, field, value) {
+            const session = sessions.find(s => s.id === id);
+            if (session) {
+                session[field] = value;
+                if (field === 'hours') {
+                    updateHoursDisplay();
+                }
+                saveToStorage();
+            }
+        }
+
+        // Delete session
+        function deleteSession(id) {
+            if (confirm('Delete this research session?')) {
+                sessions = sessions.filter(s => s.id !== id);
+                renderSessions();
+                updateHoursDisplay();
+                saveToStorage();
+            }
+        }
+
+        // Update hours display
+        function updateHoursDisplay() {
+            const total = sessions.reduce((sum, s) => sum + (parseFloat(s.hours) || 0), 0);
+            document.getElementById('totalHours').textContent = total.toFixed(1);
+            
+            const statusEl = document.getElementById('hoursStatus');
+            if (total < 8) {
+                statusEl.innerHTML = `<span class="warning">⚠️ Need ${(8 - total).toFixed(1)} more hours to meet BCG minimum (8 hours)</span>`;
+            } else if (total > 15) {
+                statusEl.innerHTML = `<span class="warning">⚠️ ${(total - 15).toFixed(1)} hours over BCG maximum (15 hours recommended)</span>`;
+            } else {
+                statusEl.innerHTML = `<span class="success">✅ Within BCG range (8-15 hours)</span>`;
+            }
+        }
+
+        // Update GPS checklist
+        function updateGPS() {
+            const checkboxes = ['gps1', 'gps2', 'gps3', 'gps4', 'gps5'];
+            checkboxes.forEach(id => {
+                const checkbox = document.getElementById(id);
+                const item = checkbox.closest('.gps-item');
+                item.classList.toggle('complete', checkbox.checked);
+            });
+            saveToStorage();
+        }
+
+        // Generate report preview
+        function generateReport() {
+            const report = buildReportHTML();
+            const win = window.open('', '_blank');
+            win.document.write(report);
+            win.document.close();
+        }
+
+        // Build report HTML
+        function buildReportHTML() {
+            const researchQuestion = document.getElementById('researchQuestion').value;
+            const clientName = document.getElementById('clientName').value;
+            const startDate = document.getElementById('startDate').value;
+            const background = document.getElementById('background').value;
+            const sourceAnalysis = document.getElementById('sourceAnalysis').value;
+            const evidenceCorrelation = document.getElementById('evidenceCorrelation').value;
+            const findings = document.getElementById('findings').value;
+            const remainingQuestions = document.getElementById('remainingQuestions').value;
+            const nextResearch = document.getElementById('nextResearch').value;
+            const totalHours = sessions.reduce((sum, s) => sum + (parseFloat(s.hours) || 0), 0);
+
+            let html = `
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>BCG Research Report</title>
+    <style>
+        body { font-family: 'Times New Roman', serif; line-height: 1.6; max-width: 800px; margin: 40px auto; padding: 20px; }
+        h1 { text-align: center; font-size: 20pt; margin-bottom: 30px; }
+        h2 { font-size: 14pt; margin-top: 30px; margin-bottom: 15px; border-bottom: 2px solid #333; }
+        h3 { font-size: 12pt; margin-top: 20px; margin-bottom: 10px; }
+        p { text-align: justify; margin-bottom: 12px; }
+        .metadata { background: #f5f5f5; padding: 15px; margin-bottom: 30px; border-left: 4px solid #333; }
+        .session { margin-bottom: 25px; padding-left: 20px; border-left: 3px solid #ccc; }
+        .session-date { font-weight: bold; font-size: 11pt; }
+        @media print { body { margin: 20px; } }
+    </style>
+</head>
+<body>
+    <h1>RESEARCH REPORT</h1>
+    
+    <div class="metadata">
+        <p><strong>Research Question:</strong> ${researchQuestion}</p>
+        <p><strong>Client:</strong> ${clientName}</p>
+        <p><strong>Project Start Date:</strong> ${startDate}</p>
+        <p><strong>Total Research Hours:</strong> ${totalHours.toFixed(1)} hours</p>
+        <p><strong>Report Date:</strong> ${new Date().toLocaleDateString()}</p>
+    </div>
+
+    <h2>BACKGROUND</h2>
+    <p>${background.replace(/\n/g, '</p><p>')}</p>
+
+    <h2>RESEARCH PROCESS</h2>`;
+
+            // Add sessions
+            sessions.forEach((session, index) => {
+                html += `
+    <div class="session">
+        <p class="session-date">Session ${index + 1} - ${session.date} (${session.hours} hours)</p>
+        <p><strong>Repository:</strong> ${session.repository} - ${session.database}</p>
+        <p><strong>Search Strategy:</strong> ${session.searchTerms}</p>
+        <p><strong>Results:</strong> ${session.results}</p>
+        <p><strong>Analysis:</strong> ${session.notes}</p>
+        ${session.nextSteps ? `<p><strong>Next Steps:</strong> ${session.nextSteps}</p>` : ''}
+    </div>`;
+            });
+
+            html += `
+    <h2>SOURCE ANALYSIS</h2>
+    <p>${sourceAnalysis.replace(/\n/g, '</p><p>')}</p>
+
+    <h2>EVIDENCE CORRELATION</h2>
+    <p>${evidenceCorrelation.replace(/\n/g, '</p><p>')}</p>
+
+    <h2>CONCLUSIONS</h2>
+    <h3>Findings</h3>
+    <p>${findings.replace(/\n/g, '</p><p>')}</p>
+
+    <h3>Remaining Questions</h3>
+    <p>${remainingQuestions.replace(/\n/g, '</p><p>')}</p>
+
+    <h3>Recommended Next Research</h3>
+    <p>${nextResearch.replace(/\n/g, '</p><p>')}</p>
+
+</body>
+</html>`;
+            return html;
+        }
+
+        // Export to Word
+        function exportToWord() {
+            const report = buildReportHTML();
+            const blob = new Blob([report], { type: 'application/msword' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'BCG_Research_Report_' + new Date().toISOString().split('T')[0] + '.doc';
+            a.click();
+        }
+
+        // Save to local storage
+        function saveToStorage() {
+            const data = {
+                sessions: sessions,
+                researchQuestion: document.getElementById('researchQuestion').value,
+                clientName: document.getElementById('clientName').value,
+                startDate: document.getElementById('startDate').value,
+                background: document.getElementById('background').value,
+                sourceAnalysis: document.getElementById('sourceAnalysis').value,
+                evidenceCorrelation: document.getElementById('evidenceCorrelation').value,
+                findings: document.getElementById('findings').value,
+                remainingQuestions: document.getElementById('remainingQuestions').value,
+                nextResearch: document.getElementById('nextResearch').value,
+                gps: {
+                    gps1: document.getElementById('gps1').checked,
+                    gps2: document.getElementById('gps2').checked,
+                    gps3: document.getElementById('gps3').checked,
+                    gps4: document.getElementById('gps4').checked,
+                    gps5: document.getElementById('gps5').checked
+                }
+            };
+            localStorage.setItem('bcgResearchReport', JSON.stringify(data));
+        }
+
+        // Load from storage
+        function loadFromStorage() {
+            const stored = localStorage.getItem('bcgResearchReport');
+            if (stored) {
+                const data = JSON.parse(stored);
+                sessions = data.sessions || [];
+                document.getElementById('researchQuestion').value = data.researchQuestion || '';
+                document.getElementById('clientName').value = data.clientName || '';
+                document.getElementById('startDate').value = data.startDate || '';
+                document.getElementById('background').value = data.background || '';
+                document.getElementById('sourceAnalysis').value = data.sourceAnalysis || '';
+                document.getElementById('evidenceCorrelation').value = data.evidenceCorrelation || '';
+                document.getElementById('findings').value = data.findings || '';
+                document.getElementById('remainingQuestions').value = data.remainingQuestions || '';
+                document.getElementById('nextResearch').value = data.nextResearch || '';
+                if (data.gps) {
+                    document.getElementById('gps1').checked = data.gps.gps1;
+                    document.getElementById('gps2').checked = data.gps.gps2;
+                    document.getElementById('gps3').checked = data.gps.gps3;
+                    document.getElementById('gps4').checked = data.gps.gps4;
+                    document.getElementById('gps5').checked = data.gps.gps5;
+                    updateGPS();
+                }
+                renderSessions();
+            }
+        }
+
+        // Save project
+        function saveProject() {
+            saveToStorage();
+            const data = localStorage.getItem('bcgResearchReport');
+            const blob = new Blob([data], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'research_report_project_' + new Date().toISOString().split('T')[0] + '.json';
+            a.click();
+            alert('✅ Project saved! You can reload this file later.');
+        }
+
+        // Load project
+        function loadProject() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            input.onchange = function(e) {
+                const file = e.target.files[0];
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const data = e.target.result;
+                    localStorage.setItem('bcgResearchReport', data);
+                    loadFromStorage();
+                    alert('✅ Project loaded successfully!');
+                };
+                reader.readAsText(file);
+            };
+            input.click();
+        }
+
+        // Auto-save on input
+        document.addEventListener('input', saveToStorage);
+
+        // Airtable functions (placeholder)
+        function saveAirtableCredentials() {
+            const token = document.getElementById('airtableToken').value;
+            const baseId = document.getElementById('airtableBaseId').value;
+            if (token && baseId) {
+                localStorage.setItem('airtableToken', token);
+                localStorage.setItem('airtableBaseId', baseId);
+                alert('✅ Credentials saved! You can now import from Airtable.');
+            } else {
+                alert('⚠️ Please fill in both fields.');
+            }
+        }
+
+        function showSetupGuide() {
+            alert('Airtable Setup Guide:\n\n1. Go to airtable.com/create/tokens\n2. Create a new personal access token\n3. Give it access to your base\n4. Copy the token and your base ID\n5. Paste them here\n\nFull instructions coming in documentation!');
+        }
+    </script>
+</body>
+</html>
