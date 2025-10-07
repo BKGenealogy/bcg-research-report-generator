@@ -90,6 +90,84 @@
             padding: 30px;
         }
 
+        .airtable-setup-section {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .airtable-setup-section h3 {
+            color: #856404;
+            margin-bottom: 15px;
+        }
+
+        .airtable-setup-section p {
+            color: #856404;
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+
+        .airtable-import-section {
+            background: #e7f5ff;
+            border: 2px solid #339af0;
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .airtable-import-section h3 {
+            color: #1864ab;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .airtable-status {
+            padding: 12px;
+            border-radius: 6px;
+            margin: 15px 0;
+            font-weight: 500;
+        }
+
+        .airtable-status.loading {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .airtable-status.success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .airtable-status.error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .airtable-status.warning {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .import-controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            margin-top: 15px;
+        }
+
+        .import-controls select {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #339af0;
+            border-radius: 6px;
+            font-size: 1em;
+            background: white;
+        }
+
         .section {
             margin-bottom: 30px;
             padding: 25px;
@@ -262,11 +340,6 @@
             margin-bottom: 4px;
         }
 
-        .session-detail span {
-            color: #2c3e50;
-            font-size: 0.95em;
-        }
-
         .hours-tracker {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
@@ -307,25 +380,6 @@
             border-radius: 20px;
             display: inline-block;
             margin-top: 10px;
-        }
-
-        .airtable-setup {
-            background: #fff3cd;
-            border: 2px solid #ffc107;
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 20px;
-        }
-
-        .airtable-setup h3 {
-            color: #856404;
-            margin-bottom: 10px;
-        }
-
-        .airtable-setup p {
-            color: #856404;
-            margin-bottom: 15px;
-            line-height: 1.6;
         }
 
         .hidden {
@@ -381,13 +435,23 @@
             flex-wrap: wrap;
         }
 
+        .credentials-saved {
+            background: #d4edda;
+            color: #155724;
+            padding: 10px;
+            border-radius: 6px;
+            margin-top: 10px;
+        }
+
         @media print {
             body {
                 background: white;
             }
             .mode-selector,
             .btn,
-            .export-section {
+            .export-section,
+            .airtable-import-section,
+            .airtable-setup-section {
                 display: none;
             }
         }
@@ -413,20 +477,51 @@
         </div>
 
         <div class="main-content">
-            <!-- Airtable Setup (hidden by default) -->
-            <div id="airtableSetup" class="airtable-setup hidden">
-                <h3>🔑 Airtable API Setup</h3>
-                <p>To import from Airtable, you need to provide your API credentials. This is a one-time setup and your credentials are stored locally in your browser.</p>
+            <!-- Airtable Setup Section -->
+            <div id="airtableSetupSection" class="airtable-setup-section hidden">
+                <h3>🔑 Airtable Connection Setup</h3>
+                <p>To import from Airtable, enter your credentials below. These are stored locally in your browser only.</p>
+                
                 <div class="form-group">
                     <label>Personal Access Token:</label>
                     <input type="password" id="airtableToken" placeholder="pat...">
+                    <small style="color: #6c757d; display: block; margin-top: 5px;">
+                        Get your token at: <a href="https://airtable.com/create/tokens" target="_blank">airtable.com/create/tokens</a>
+                    </small>
                 </div>
+                
                 <div class="form-group">
                     <label>Base ID:</label>
                     <input type="text" id="airtableBaseId" placeholder="app...">
+                    <small style="color: #6c757d; display: block; margin-top: 5px;">
+                        Find this in your Airtable URL: airtable.com/<strong>app...</strong>/...
+                    </small>
                 </div>
-                <button class="btn btn-primary" onclick="saveAirtableCredentials()">💾 Save Credentials</button>
-                <button class="btn btn-secondary" onclick="showSetupGuide()">📖 Setup Guide</button>
+                
+                <button class="btn btn-primary" onclick="saveCredentials()">💾 Save & Connect</button>
+                
+                <div id="credentialsSaved" class="credentials-saved hidden">
+                    ✅ Credentials saved! Ready to import projects.
+                </div>
+            </div>
+
+            <!-- Airtable Import Section -->
+            <div id="airtableImportSection" class="airtable-import-section hidden">
+                <h3>🔗 Import from Airtable</h3>
+                <p style="color: #495057; margin-bottom: 15px;">Select a project to automatically import all research sessions from your Airtable database.</p>
+                
+                <div id="airtableStatus" class="airtable-status">
+                    Configure Airtable credentials to begin importing.
+                </div>
+
+                <div class="import-controls">
+                    <select id="projectSelect">
+                        <option value="">-- Select a Project --</option>
+                    </select>
+                    <button class="btn btn-primary" onclick="importProjectData()">
+                        📥 Import Project
+                    </button>
+                </div>
             </div>
 
             <!-- Section 1: Project Information -->
@@ -468,7 +563,7 @@
                     <button class="btn btn-primary" onclick="addSession()">➕ Add Session</button>
                 </div>
                 <div id="sessionsList" class="session-list">
-                    <!-- Sessions will be added here -->
+                    <p style="text-align: center; color: #6c757d;">No sessions added yet. Click "Add Session" to begin.</p>
                 </div>
             </div>
 
@@ -543,6 +638,7 @@
                     <button class="btn btn-primary" onclick="exportToWord()">📝 Export to Word</button>
                     <button class="btn btn-secondary" onclick="saveProject()">💾 Save Project</button>
                     <button class="btn btn-secondary" onclick="loadProject()">📂 Load Project</button>
+                    <button class="btn btn-danger" onclick="clearAll()">🗑️ Clear & Start New</button>
                 </div>
             </div>
         </div>
@@ -552,24 +648,189 @@
         // Global state
         let sessions = [];
         let currentMode = 'manual';
+        let airtableConfig = null;
 
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
             loadFromStorage();
             updateHoursDisplay();
+            loadSavedCredentials();
         });
+
+        // Load saved Airtable credentials
+        function loadSavedCredentials() {
+            const saved = localStorage.getItem('airtableCredentials');
+            if (saved) {
+                airtableConfig = JSON.parse(saved);
+                document.getElementById('credentialsSaved').classList.remove('hidden');
+            }
+        }
+
+        // Save Airtable credentials
+        function saveCredentials() {
+            const token = document.getElementById('airtableToken').value.trim();
+            const baseId = document.getElementById('airtableBaseId').value.trim();
+
+            if (!token || !baseId) {
+                alert('Please enter both token and base ID');
+                return;
+            }
+
+            airtableConfig = { token, baseId };
+            localStorage.setItem('airtableCredentials', JSON.stringify(airtableConfig));
+            
+            document.getElementById('credentialsSaved').classList.remove('hidden');
+            document.getElementById('airtableImportSection').classList.remove('hidden');
+            
+            initializeAirtable();
+        }
+
+        // Airtable API functions
+        function getHeaders() {
+            return {
+                'Authorization': `Bearer ${airtableConfig.token}`,
+                'Content-Type': 'application/json'
+            };
+        }
+
+        async function fetchProjects() {
+            const url = `https://api.airtable.com/v0/${airtableConfig.baseId}/Projects`;
+            const response = await fetch(url, { headers: getHeaders() });
+            if (!response.ok) throw new Error(`API error: ${response.status}`);
+            
+            const data = await response.json();
+            return data.records.map(record => ({
+                id: record.id,
+                name: record.fields.Name || 'Unnamed Project',
+                clientName: record.fields['Client Name'] || '',
+                startDate: record.fields['Start Date'] || '',
+                researchGoal: record.fields['Research Goal'] || '',
+                location: record.fields.Location || '',
+                primarySurname: record.fields['Primary surname'] || '',
+                hoursLogged: record.fields['Hours logged'] || 0
+            }));
+        }
+
+        async function fetchResearchLog(projectName) {
+            const formula = `SEARCH("${projectName}", {Project})`;
+            const url = `https://api.airtable.com/v0/${airtableConfig.baseId}/Research%20Log?filterByFormula=${encodeURIComponent(formula)}`;
+            
+            const response = await fetch(url, { headers: getHeaders() });
+            if (!response.ok) throw new Error(`API error: ${response.status}`);
+
+            const data = await response.json();
+            return data.records.map(record => ({
+                date: record.fields.Date || '',
+                repository: record.fields['Repository/Database'] || '',
+                searchTerms: record.fields['Search Terms'] || '',
+                results: record.fields.Results || '',
+                notes: record.fields.Notes || '',
+                nextSteps: record.fields['Next Steps'] || '',
+                hours: parseFloat(record.fields['Time Spent']) || 0
+            }));
+        }
+
+        async function initializeAirtable() {
+            if (!airtableConfig) return;
+
+            const statusEl = document.getElementById('airtableStatus');
+            const selectEl = document.getElementById('projectSelect');
+
+            try {
+                statusEl.textContent = 'Loading projects from Airtable...';
+                statusEl.className = 'airtable-status loading';
+
+                const projects = await fetchProjects();
+
+                selectEl.innerHTML = '<option value="">-- Select a Project --</option>';
+                projects.forEach(project => {
+                    const option = document.createElement('option');
+                    option.value = project.id;
+                    option.textContent = project.name;
+                    option.dataset.projectData = JSON.stringify(project);
+                    selectEl.appendChild(option);
+                });
+
+                statusEl.textContent = `✅ Loaded ${projects.length} projects`;
+                statusEl.className = 'airtable-status success';
+            } catch (error) {
+                statusEl.textContent = `❌ Error: ${error.message}`;
+                statusEl.className = 'airtable-status error';
+            }
+        }
+
+        async function importProjectData() {
+            if (!airtableConfig) {
+                alert('Please configure Airtable credentials first');
+                return;
+            }
+
+            const selectEl = document.getElementById('projectSelect');
+            const statusEl = document.getElementById('airtableStatus');
+            const selectedOption = selectEl.options[selectEl.selectedIndex];
+
+            if (!selectedOption.value) {
+                alert('Please select a project');
+                return;
+            }
+
+            try {
+                statusEl.textContent = 'Importing...';
+                statusEl.className = 'airtable-status loading';
+
+                const projectData = JSON.parse(selectedOption.dataset.projectData);
+
+                document.getElementById('researchQuestion').value = projectData.researchGoal;
+                document.getElementById('clientName').value = projectData.clientName;
+                document.getElementById('startDate').value = projectData.startDate;
+                document.getElementById('background').value = `Project: ${projectData.name}\nPrimary Surname: ${projectData.primarySurname}\nLocation: ${projectData.location}\n\n[Add additional background]`;
+
+                const researchEntries = await fetchResearchLog(projectData.name);
+
+                if (researchEntries.length === 0) {
+                    statusEl.textContent = '⚠️ No research entries found';
+                    statusEl.className = 'airtable-status warning';
+                    return;
+                }
+
+                sessions = researchEntries.map(entry => ({
+                    id: Date.now() + Math.random(),
+                    date: entry.date,
+                    hours: entry.hours,
+                    repository: entry.repository,
+                    database: '',
+                    searchTerms: entry.searchTerms,
+                    results: entry.results,
+                    notes: entry.notes,
+                    nextSteps: entry.nextSteps
+                }));
+
+                sessions.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+                renderSessions();
+                updateHoursDisplay();
+                saveToStorage();
+
+                statusEl.textContent = `✅ Imported ${researchEntries.length} sessions`;
+                statusEl.className = 'airtable-status success';
+            } catch (error) {
+                statusEl.textContent = `❌ Error: ${error.message}`;
+                statusEl.className = 'airtable-status error';
+            }
+        }
 
         // Mode selection
         function selectMode(mode) {
             currentMode = mode;
             document.getElementById('manualMode').classList.toggle('active', mode === 'manual');
             document.getElementById('airtableMode').classList.toggle('active', mode === 'airtable');
-            document.getElementById('airtableSetup').classList.toggle('hidden', mode === 'manual');
+            document.getElementById('airtableSetupSection').classList.toggle('hidden', mode === 'manual');
+            document.getElementById('airtableImportSection').classList.toggle('hidden', mode === 'manual' || !airtableConfig);
         }
 
-        // Add research session
+        // Session management
         function addSession() {
-            const session = {
+            sessions.push({
                 id: Date.now(),
                 date: '',
                 hours: 0,
@@ -579,78 +840,61 @@
                 results: '',
                 notes: '',
                 nextSteps: ''
-            };
-            sessions.push(session);
+            });
             renderSessions();
-            updateHoursDisplay();
         }
 
-        // Render sessions
         function renderSessions() {
             const container = document.getElementById('sessionsList');
             if (sessions.length === 0) {
-                container.innerHTML = '<p style="text-align: center; color: #6c757d;">No sessions added yet. Click "Add Session" to begin.</p>';
+                container.innerHTML = '<p style="text-align: center; color: #6c757d;">No sessions yet. Click "Add Session" or import from Airtable.</p>';
                 return;
             }
 
-            container.innerHTML = sessions.map(session => `
-                <div class="session-item" id="session-${session.id}">
+            container.innerHTML = sessions.map(s => `
+                <div class="session-item">
                     <div class="session-header">
-                        <div class="session-date">
-                            <input type="date" value="${session.date}" onchange="updateSession(${session.id}, 'date', this.value)" style="border: none; background: transparent; font-weight: 600; color: #2c3e50; font-size: 1.1em;">
-                        </div>
+                        <input type="date" value="${s.date}" onchange="updateSession(${s.id}, 'date', this.value)" style="border: none; background: transparent; font-weight: 600; color: #2c3e50; font-size: 1.1em;">
                         <div style="display: flex; gap: 10px; align-items: center;">
                             <div class="session-hours">
-                                <input type="number" step="0.5" value="${session.hours}" onchange="updateSession(${session.id}, 'hours', parseFloat(this.value))" style="width: 60px; border: none; background: transparent; color: white; font-weight: 600; text-align: center;"> hrs
+                                <input type="number" step="0.5" value="${s.hours}" onchange="updateSession(${s.id}, 'hours', parseFloat(this.value))" style="width: 60px; border: none; background: transparent; color: white; font-weight: 600; text-align: center;"> hrs
                             </div>
-                            <button class="btn btn-danger btn-icon" onclick="deleteSession(${session.id})" title="Delete session">🗑️</button>
+                            <button class="btn btn-danger btn-icon" onclick="deleteSession(${s.id})">🗑️</button>
                         </div>
                     </div>
                     <div class="session-details">
                         <div class="session-detail">
                             <strong>Repository:</strong>
-                            <input type="text" value="${session.repository}" onchange="updateSession(${session.id}, 'repository', this.value)" placeholder="e.g., FamilySearch">
-                        </div>
-                        <div class="session-detail">
-                            <strong>Database:</strong>
-                            <input type="text" value="${session.database}" onchange="updateSession(${session.id}, 'database', this.value)" placeholder="e.g., 1940 Census">
+                            <input type="text" value="${s.repository}" onchange="updateSession(${s.id}, 'repository', this.value)">
                         </div>
                         <div class="session-detail">
                             <strong>Search Terms:</strong>
-                            <input type="text" value="${session.searchTerms}" onchange="updateSession(${session.id}, 'searchTerms', this.value)" placeholder="Keywords used">
+                            <input type="text" value="${s.searchTerms}" onchange="updateSession(${s.id}, 'searchTerms', this.value)">
                         </div>
                     </div>
                     <div class="form-group" style="margin-top: 15px;">
-                        <strong style="display: block; margin-bottom: 8px; font-size: 0.9em; color: #6c757d;">Results / Findings:</strong>
-                        <textarea onchange="updateSession(${session.id}, 'results', this.value)" placeholder="What did you find (or not find)?">${session.results}</textarea>
+                        <strong style="display: block; margin-bottom: 8px; font-size: 0.9em; color: #6c757d;">Results:</strong>
+                        <textarea onchange="updateSession(${s.id}, 'results', this.value)">${s.results}</textarea>
                     </div>
                     <div class="form-group">
-                        <strong style="display: block; margin-bottom: 8px; font-size: 0.9em; color: #6c757d;">Analysis Notes:</strong>
-                        <textarea onchange="updateSession(${session.id}, 'notes', this.value)" placeholder="Your analysis and observations">${session.notes}</textarea>
-                    </div>
-                    <div class="form-group">
-                        <strong style="display: block; margin-bottom: 8px; font-size: 0.9em; color: #6c757d;">Next Steps:</strong>
-                        <textarea onchange="updateSession(${session.id}, 'nextSteps', this.value)" placeholder="What to research next">${session.nextSteps}</textarea>
+                        <strong style="display: block; margin-bottom: 8px; font-size: 0.9em; color: #6c757d;">Analysis:</strong>
+                        <textarea onchange="updateSession(${s.id}, 'notes', this.value)">${s.notes}</textarea>
                     </div>
                 </div>
             `).join('');
         }
 
-        // Update session
         function updateSession(id, field, value) {
             const session = sessions.find(s => s.id === id);
             if (session) {
                 session[field] = value;
-                if (field === 'hours') {
-                    updateHoursDisplay();
-                }
+                if (field === 'hours') updateHoursDisplay();
                 saveToStorage();
             }
         }
 
-        // Delete session
         function deleteSession(id) {
-            if (confirm('Delete this research session?')) {
+            if (confirm('Delete this session?')) {
                 sessions = sessions.filter(s => s.id !== id);
                 renderSessions();
                 updateHoursDisplay();
@@ -658,33 +902,28 @@
             }
         }
 
-        // Update hours display
         function updateHoursDisplay() {
             const total = sessions.reduce((sum, s) => sum + (parseFloat(s.hours) || 0), 0);
             document.getElementById('totalHours').textContent = total.toFixed(1);
             
             const statusEl = document.getElementById('hoursStatus');
             if (total < 8) {
-                statusEl.innerHTML = `<span class="warning">⚠️ Need ${(8 - total).toFixed(1)} more hours to meet BCG minimum (8 hours)</span>`;
+                statusEl.innerHTML = `<span class="warning">⚠️ Need ${(8 - total).toFixed(1)} more hours (BCG minimum: 8)</span>`;
             } else if (total > 15) {
-                statusEl.innerHTML = `<span class="warning">⚠️ ${(total - 15).toFixed(1)} hours over BCG maximum (15 hours recommended)</span>`;
+                statusEl.innerHTML = `<span class="warning">⚠️ ${(total - 15).toFixed(1)} hours over BCG maximum (15)</span>`;
             } else {
                 statusEl.innerHTML = `<span class="success">✅ Within BCG range (8-15 hours)</span>`;
             }
         }
 
-        // Update GPS checklist
         function updateGPS() {
-            const checkboxes = ['gps1', 'gps2', 'gps3', 'gps4', 'gps5'];
-            checkboxes.forEach(id => {
+            ['gps1', 'gps2', 'gps3', 'gps4', 'gps5'].forEach(id => {
                 const checkbox = document.getElementById(id);
-                const item = checkbox.closest('.gps-item');
-                item.classList.toggle('complete', checkbox.checked);
+                checkbox.closest('.gps-item').classList.toggle('complete', checkbox.checked);
             });
             saveToStorage();
         }
 
-        // Generate report preview
         function generateReport() {
             const report = buildReportHTML();
             const win = window.open('', '_blank');
@@ -692,7 +931,6 @@
             win.document.close();
         }
 
-        // Build report HTML
         function buildReportHTML() {
             const researchQuestion = document.getElementById('researchQuestion').value;
             const clientName = document.getElementById('clientName').value;
@@ -705,76 +943,43 @@
             const nextResearch = document.getElementById('nextResearch').value;
             const totalHours = sessions.reduce((sum, s) => sum + (parseFloat(s.hours) || 0), 0);
 
-            let html = `
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <title>BCG Research Report</title>
-    <style>
-        body { font-family: 'Times New Roman', serif; line-height: 1.6; max-width: 800px; margin: 40px auto; padding: 20px; }
-        h1 { text-align: center; font-size: 20pt; margin-bottom: 30px; }
-        h2 { font-size: 14pt; margin-top: 30px; margin-bottom: 15px; border-bottom: 2px solid #333; }
-        h3 { font-size: 12pt; margin-top: 20px; margin-bottom: 10px; }
-        p { text-align: justify; margin-bottom: 12px; }
-        .metadata { background: #f5f5f5; padding: 15px; margin-bottom: 30px; border-left: 4px solid #333; }
-        .session { margin-bottom: 25px; padding-left: 20px; border-left: 3px solid #ccc; }
-        .session-date { font-weight: bold; font-size: 11pt; }
-        @media print { body { margin: 20px; } }
-    </style>
-</head>
-<body>
-    <h1>RESEARCH REPORT</h1>
-    
-    <div class="metadata">
-        <p><strong>Research Question:</strong> ${researchQuestion}</p>
-        <p><strong>Client:</strong> ${clientName}</p>
-        <p><strong>Project Start Date:</strong> ${startDate}</p>
-        <p><strong>Total Research Hours:</strong> ${totalHours.toFixed(1)} hours</p>
-        <p><strong>Report Date:</strong> ${new Date().toLocaleDateString()}</p>
-    </div>
+            let html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>BCG Research Report</title><style>
+                body { font-family: 'Times New Roman', serif; line-height: 1.6; max-width: 800px; margin: 40px auto; padding: 20px; }
+                h1 { text-align: center; font-size: 20pt; margin-bottom: 30px; }
+                h2 { font-size: 14pt; margin-top: 30px; margin-bottom: 15px; border-bottom: 2px solid #333; }
+                p { text-align: justify; margin-bottom: 12px; }
+                .metadata { background: #f5f5f5; padding: 15px; margin-bottom: 30px; border-left: 4px solid #333; }
+                .session { margin-bottom: 25px; padding-left: 20px; border-left: 3px solid #ccc; }
+            </style></head><body>
+            <h1>RESEARCH REPORT</h1>
+            <div class="metadata">
+                <p><strong>Research Question:</strong> ${researchQuestion}</p>
+                <p><strong>Client:</strong> ${clientName}</p>
+                <p><strong>Start Date:</strong> ${startDate}</p>
+                <p><strong>Total Hours:</strong> ${totalHours.toFixed(1)}</p>
+                <p><strong>Report Date:</strong> ${new Date().toLocaleDateString()}</p>
+            </div>
+            <h2>BACKGROUND</h2><p>${background.replace(/\n/g, '</p><p>')}</p>
+            <h2>RESEARCH PROCESS</h2>`;
 
-    <h2>BACKGROUND</h2>
-    <p>${background.replace(/\n/g, '</p><p>')}</p>
-
-    <h2>RESEARCH PROCESS</h2>`;
-
-            // Add sessions
-            sessions.forEach((session, index) => {
-                html += `
-    <div class="session">
-        <p class="session-date">Session ${index + 1} - ${session.date} (${session.hours} hours)</p>
-        <p><strong>Repository:</strong> ${session.repository} - ${session.database}</p>
-        <p><strong>Search Strategy:</strong> ${session.searchTerms}</p>
-        <p><strong>Results:</strong> ${session.results}</p>
-        <p><strong>Analysis:</strong> ${session.notes}</p>
-        ${session.nextSteps ? `<p><strong>Next Steps:</strong> ${session.nextSteps}</p>` : ''}
-    </div>`;
+            sessions.forEach((s, i) => {
+                html += `<div class="session"><p><strong>Session ${i + 1} - ${s.date} (${s.hours} hrs)</strong></p>
+                <p><strong>Repository:</strong> ${s.repository}</p>
+                <p><strong>Search:</strong> ${s.searchTerms}</p>
+                <p><strong>Results:</strong> ${s.results}</p>
+                <p><strong>Analysis:</strong> ${s.notes}</p></div>`;
             });
 
-            html += `
-    <h2>SOURCE ANALYSIS</h2>
-    <p>${sourceAnalysis.replace(/\n/g, '</p><p>')}</p>
-
-    <h2>EVIDENCE CORRELATION</h2>
-    <p>${evidenceCorrelation.replace(/\n/g, '</p><p>')}</p>
-
-    <h2>CONCLUSIONS</h2>
-    <h3>Findings</h3>
-    <p>${findings.replace(/\n/g, '</p><p>')}</p>
-
-    <h3>Remaining Questions</h3>
-    <p>${remainingQuestions.replace(/\n/g, '</p><p>')}</p>
-
-    <h3>Recommended Next Research</h3>
-    <p>${nextResearch.replace(/\n/g, '</p><p>')}</p>
-
-</body>
-</html>`;
+            html += `<h2>SOURCE ANALYSIS</h2><p>${sourceAnalysis.replace(/\n/g, '</p><p>')}</p>
+            <h2>EVIDENCE CORRELATION</h2><p>${evidenceCorrelation.replace(/\n/g, '</p><p>')}</p>
+            <h2>CONCLUSIONS</h2>
+            <h3>Findings</h3><p>${findings.replace(/\n/g, '</p><p>')}</p>
+            <h3>Remaining Questions</h3><p>${remainingQuestions.replace(/\n/g, '</p><p>')}</p>
+            <h3>Next Research</h3><p>${nextResearch.replace(/\n/g, '</p><p>')}</p>
+            </body></html>`;
             return html;
         }
 
-        // Export to Word
         function exportToWord() {
             const report = buildReportHTML();
             const blob = new Blob([report], { type: 'application/msword' });
@@ -785,10 +990,9 @@
             a.click();
         }
 
-        // Save to local storage
         function saveToStorage() {
             const data = {
-                sessions: sessions,
+                sessions,
                 researchQuestion: document.getElementById('researchQuestion').value,
                 clientName: document.getElementById('clientName').value,
                 startDate: document.getElementById('startDate').value,
@@ -809,7 +1013,6 @@
             localStorage.setItem('bcgResearchReport', JSON.stringify(data));
         }
 
-        // Load from storage
         function loadFromStorage() {
             const stored = localStorage.getItem('bcgResearchReport');
             if (stored) {
@@ -836,7 +1039,6 @@
             }
         }
 
-        // Save project
         function saveProject() {
             saveToStorage();
             const data = localStorage.getItem('bcgResearchReport');
@@ -844,49 +1046,64 @@
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = 'research_report_project_' + new Date().toISOString().split('T')[0] + '.json';
+            a.download = 'project_' + new Date().toISOString().split('T')[0] + '.json';
             a.click();
-            alert('✅ Project saved! You can reload this file later.');
         }
 
-        // Load project
         function loadProject() {
             const input = document.createElement('input');
             input.type = 'file';
             input.accept = '.json';
-            input.onchange = function(e) {
+            input.onchange = e => {
                 const file = e.target.files[0];
                 const reader = new FileReader();
-                reader.onload = function(e) {
-                    const data = e.target.result;
-                    localStorage.setItem('bcgResearchReport', data);
+                reader.onload = e => {
+                    localStorage.setItem('bcgResearchReport', e.target.result);
                     loadFromStorage();
-                    alert('✅ Project loaded successfully!');
+                    alert('✅ Project loaded!');
                 };
                 reader.readAsText(file);
             };
             input.click();
         }
 
-        // Auto-save on input
-        document.addEventListener('input', saveToStorage);
-
-        // Airtable functions (placeholder)
-        function saveAirtableCredentials() {
-            const token = document.getElementById('airtableToken').value;
-            const baseId = document.getElementById('airtableBaseId').value;
-            if (token && baseId) {
-                localStorage.setItem('airtableToken', token);
-                localStorage.setItem('airtableBaseId', baseId);
-                alert('✅ Credentials saved! You can now import from Airtable.');
-            } else {
-                alert('⚠️ Please fill in both fields.');
+        function clearAll() {
+            if (confirm('⚠️ Clear all data and start a new report?\n\nThis will delete:\n• All research sessions\n• Project information\n• Analysis sections\n• GPS checklist\n\nThis cannot be undone!')) {
+                // Clear all form fields
+                document.getElementById('researchQuestion').value = '';
+                document.getElementById('clientName').value = '';
+                document.getElementById('startDate').value = '';
+                document.getElementById('background').value = '';
+                document.getElementById('sourceAnalysis').value = '';
+                document.getElementById('evidenceCorrelation').value = '';
+                document.getElementById('findings').value = '';
+                document.getElementById('remainingQuestions').value = '';
+                document.getElementById('nextResearch').value = '';
+                
+                // Clear GPS checkboxes
+                document.getElementById('gps1').checked = false;
+                document.getElementById('gps2').checked = false;
+                document.getElementById('gps3').checked = false;
+                document.getElementById('gps4').checked = false;
+                document.getElementById('gps5').checked = false;
+                updateGPS();
+                
+                // Clear sessions
+                sessions = [];
+                renderSessions();
+                updateHoursDisplay();
+                
+                // Clear localStorage
+                localStorage.removeItem('bcgResearchReport');
+                
+                alert('✅ All data cleared! Ready for new report.');
+                
+                // Scroll to top
+                window.scrollTo({ top: 0, behavior: 'smooth' });
             }
         }
 
-        function showSetupGuide() {
-            alert('Airtable Setup Guide:\n\n1. Go to airtable.com/create/tokens\n2. Create a new personal access token\n3. Give it access to your base\n4. Copy the token and your base ID\n5. Paste them here\n\nFull instructions coming in documentation!');
-        }
+        document.addEventListener('input', saveToStorage);
     </script>
 </body>
 </html>
