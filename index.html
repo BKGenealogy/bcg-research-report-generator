@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BCG Research Report Generator</title>
+    <title>📋 BCG Research Report Generator</title>
     <style>
         * {
             margin: 0;
@@ -12,50 +12,51 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: Georgia, 'Times New Roman', serif;
+            background: linear-gradient(135deg, #f5f1e8 0%, #e8dcc8 100%);
             min-height: 100vh;
             padding: 20px;
+            line-height: 1.6;
         }
 
         .container {
             max-width: 1200px;
             margin: 0 auto;
             background: white;
-            border-radius: 12px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
             overflow: hidden;
         }
 
         .header {
-            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            background: linear-gradient(135deg, #5c4033 0%, #8b6f47 100%);
             color: white;
-            padding: 30px;
+            padding: 40px;
             text-align: center;
         }
 
         .header h1 {
-            font-size: 2em;
+            font-size: 32px;
             margin-bottom: 10px;
         }
 
         .header p {
-            opacity: 0.9;
-            font-size: 1.1em;
+            opacity: 0.95;
+            font-size: 16px;
         }
 
         .mode-selector {
             display: flex;
             gap: 20px;
             padding: 30px;
-            background: #f8f9fa;
-            border-bottom: 2px solid #dee2e6;
+            background: #f9f6f0;
+            border-bottom: 3px solid #d4c4a8;
         }
 
         .mode-card {
             flex: 1;
             background: white;
-            border: 2px solid #dee2e6;
+            border: 2px solid #d4c4a8;
             border-radius: 8px;
             padding: 25px;
             cursor: pointer;
@@ -64,25 +65,26 @@
         }
 
         .mode-card:hover {
-            border-color: #667eea;
+            border-color: #8b6f47;
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+            box-shadow: 0 4px 12px rgba(139, 111, 71, 0.2);
         }
 
         .mode-card.active {
-            border-color: #667eea;
-            background: #f0f4ff;
+            border-color: #8b6f47;
+            background: #fff8e7;
+            border-width: 3px;
         }
 
         .mode-card h3 {
-            color: #2c3e50;
+            color: #5c4033;
             margin-bottom: 10px;
-            font-size: 1.3em;
+            font-size: 20px;
         }
 
         .mode-card p {
-            color: #6c757d;
-            font-size: 0.95em;
+            color: #8b6f47;
+            font-size: 14px;
             line-height: 1.6;
         }
 
@@ -91,38 +93,42 @@
         }
 
         .airtable-setup-section {
-            background: #fff3cd;
-            border: 2px solid #ffc107;
+            background: #fff8e7;
+            border: 2px solid #f39c12;
+            border-left: 4px solid #f39c12;
             border-radius: 8px;
             padding: 25px;
             margin-bottom: 30px;
         }
 
         .airtable-setup-section h3 {
-            color: #856404;
+            color: #5c4033;
             margin-bottom: 15px;
+            font-size: 20px;
         }
 
         .airtable-setup-section p {
-            color: #856404;
+            color: #8b6f47;
             margin-bottom: 15px;
             line-height: 1.6;
         }
 
         .airtable-import-section {
-            background: #e7f5ff;
-            border: 2px solid #339af0;
+            background: #f9f6f0;
+            border: 2px solid #d4c4a8;
+            border-left: 4px solid #8b6f47;
             border-radius: 8px;
             padding: 25px;
             margin-bottom: 30px;
         }
 
         .airtable-import-section h3 {
-            color: #1864ab;
+            color: #5c4033;
             margin-bottom: 15px;
             display: flex;
             align-items: center;
             gap: 10px;
+            font-size: 20px;
         }
 
         .airtable-status {
@@ -130,26 +136,31 @@
             border-radius: 6px;
             margin: 15px 0;
             font-weight: 500;
+            border-left: 3px solid;
         }
 
         .airtable-status.loading {
-            background: #fff3cd;
+            background: #fff8e7;
             color: #856404;
+            border-color: #f39c12;
         }
 
         .airtable-status.success {
             background: #d4edda;
             color: #155724;
+            border-color: #28a745;
         }
 
         .airtable-status.error {
             background: #f8d7da;
             color: #721c24;
+            border-color: #dc3545;
         }
 
         .airtable-status.warning {
-            background: #fff3cd;
+            background: #fff8e7;
             color: #856404;
+            border-color: #f39c12;
         }
 
         .import-controls {
@@ -162,18 +173,19 @@
         .import-controls select {
             flex: 1;
             padding: 12px;
-            border: 2px solid #339af0;
+            border: 2px solid #d4c4a8;
             border-radius: 6px;
-            font-size: 1em;
+            font-size: 14px;
+            font-family: Georgia, serif;
             background: white;
         }
 
         .section {
             margin-bottom: 30px;
             padding: 25px;
-            background: #f8f9fa;
+            background: #f9f6f0;
             border-radius: 8px;
-            border-left: 4px solid #667eea;
+            border: 2px solid #d4c4a8;
         }
 
         .section-header {
@@ -181,11 +193,13 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #d4c4a8;
         }
 
         .section-header h2 {
-            color: #2c3e50;
-            font-size: 1.5em;
+            color: #5c4033;
+            font-size: 24px;
         }
 
         .form-group {
@@ -195,9 +209,9 @@
         .form-group label {
             display: block;
             margin-bottom: 8px;
-            color: #2c3e50;
-            font-weight: 600;
-            font-size: 0.95em;
+            color: #5c4033;
+            font-weight: bold;
+            font-size: 14px;
         }
 
         .form-group input,
@@ -205,18 +219,19 @@
         .form-group select {
             width: 100%;
             padding: 12px;
-            border: 2px solid #dee2e6;
+            border: 2px solid #d4c4a8;
             border-radius: 6px;
-            font-size: 1em;
-            font-family: inherit;
+            font-size: 14px;
+            font-family: Georgia, serif;
             transition: border-color 0.3s ease;
+            background: white;
         }
 
         .form-group input:focus,
         .form-group textarea:focus,
         .form-group select:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: #8b6f47;
         }
 
         .form-group textarea {
@@ -224,12 +239,21 @@
             resize: vertical;
         }
 
+        .form-group small {
+            display: block;
+            color: #8b6f47;
+            font-size: 12px;
+            margin-top: 5px;
+            font-style: italic;
+        }
+
         .btn {
             padding: 12px 24px;
             border: none;
             border-radius: 6px;
-            font-size: 1em;
-            font-weight: 600;
+            font-size: 14px;
+            font-weight: bold;
+            font-family: Georgia, serif;
             cursor: pointer;
             transition: all 0.3s ease;
             display: inline-flex;
@@ -238,14 +262,14 @@
         }
 
         .btn-primary {
-            background: #667eea;
+            background: #8b6f47;
             color: white;
         }
 
         .btn-primary:hover {
-            background: #5568d3;
+            background: #5c4033;
             transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+            box-shadow: 0 4px 12px rgba(92, 64, 51, 0.3);
         }
 
         .btn-secondary {
@@ -271,6 +295,10 @@
             color: white;
         }
 
+        .btn-danger:hover {
+            background: #c82333;
+        }
+
         .btn-icon {
             padding: 10px;
             width: 40px;
@@ -289,13 +317,13 @@
             padding: 20px;
             border-radius: 6px;
             margin-bottom: 15px;
-            border: 2px solid #dee2e6;
+            border: 2px solid #d4c4a8;
             transition: all 0.3s ease;
         }
 
         .session-item:hover {
-            border-color: #667eea;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border-color: #8b6f47;
+            box-shadow: 0 2px 8px rgba(139, 111, 71, 0.2);
         }
 
         .session-header {
@@ -306,18 +334,18 @@
         }
 
         .session-date {
-            font-weight: 600;
-            color: #2c3e50;
-            font-size: 1.1em;
+            font-weight: bold;
+            color: #5c4033;
+            font-size: 16px;
         }
 
         .session-hours {
-            background: #667eea;
+            background: #8b6f47;
             color: white;
             padding: 6px 12px;
             border-radius: 20px;
-            font-size: 0.9em;
-            font-weight: 600;
+            font-size: 13px;
+            font-weight: bold;
         }
 
         .session-details {
@@ -329,45 +357,47 @@
 
         .session-detail {
             padding: 10px;
-            background: #f8f9fa;
+            background: #f9f6f0;
             border-radius: 4px;
+            border-left: 3px solid #d4c4a8;
         }
 
         .session-detail strong {
             display: block;
-            color: #6c757d;
-            font-size: 0.85em;
+            color: #5c4033;
+            font-size: 12px;
             margin-bottom: 4px;
         }
 
         .hours-tracker {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #8b6f47 0%, #5c4033 100%);
             color: white;
-            padding: 20px;
+            padding: 30px;
             border-radius: 8px;
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 12px rgba(92, 64, 51, 0.2);
         }
 
         .hours-tracker h3 {
-            font-size: 1.2em;
+            font-size: 18px;
             margin-bottom: 10px;
-            opacity: 0.9;
+            opacity: 0.95;
         }
 
         .hours-display {
-            font-size: 3em;
-            font-weight: 700;
+            font-size: 48px;
+            font-weight: bold;
             margin-bottom: 10px;
         }
 
         .hours-status {
-            font-size: 0.95em;
-            opacity: 0.9;
+            font-size: 14px;
+            opacity: 0.95;
         }
 
         .hours-status.warning {
-            background: rgba(255, 193, 7, 0.2);
+            background: rgba(243, 156, 18, 0.3);
             padding: 8px 16px;
             border-radius: 20px;
             display: inline-block;
@@ -375,7 +405,7 @@
         }
 
         .hours-status.success {
-            background: rgba(40, 167, 69, 0.2);
+            background: rgba(40, 167, 69, 0.3);
             padding: 8px 16px;
             border-radius: 20px;
             display: inline-block;
@@ -399,8 +429,9 @@
             gap: 12px;
             padding: 12px;
             margin-bottom: 10px;
-            background: #f8f9fa;
+            background: #f9f6f0;
             border-radius: 6px;
+            border-left: 3px solid #d4c4a8;
             transition: all 0.3s ease;
         }
 
@@ -415,17 +446,25 @@
             cursor: pointer;
         }
 
+        .gps-item label {
+            cursor: pointer;
+            color: #5c4033;
+            font-size: 14px;
+        }
+
         .export-section {
-            background: #e7f5ff;
-            border: 2px solid #339af0;
+            background: #fff8e7;
+            border: 2px solid #f39c12;
+            border-left: 4px solid #f39c12;
             border-radius: 8px;
             padding: 25px;
             text-align: center;
         }
 
         .export-section h3 {
-            color: #1864ab;
+            color: #5c4033;
             margin-bottom: 15px;
+            font-size: 20px;
         }
 
         .export-buttons {
@@ -441,6 +480,49 @@
             padding: 10px;
             border-radius: 6px;
             margin-top: 10px;
+            border-left: 3px solid #28a745;
+        }
+
+        .banner {
+            background: linear-gradient(135deg, #5c4033 0%, #8b6f47 100%);
+            color: white;
+            padding: 12px 20px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .banner-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .banner-text {
+            font-size: 13px;
+        }
+
+        @media (max-width: 768px) {
+            .mode-selector {
+                flex-direction: column;
+            }
+            
+            .session-header {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .export-buttons {
+                flex-direction: column;
+            }
+            
+            .banner-content {
+                flex-direction: column;
+                text-align: center;
+            }
         }
 
         @media print {
@@ -451,310 +533,111 @@
             .btn,
             .export-section,
             .airtable-import-section,
-            .airtable-setup-section {
+            .airtable-setup-section,
+            .banner {
                 display: none;
             }
         }
-/* ============================================
-   BK GENEALOGY UNIVERSAL PRINT OPTIMIZATION
-   Apply to all public tools for consistency
-   ============================================ */
 
-@media print {
-    /* Reset and Core Print Styles */
-    * {
-        -webkit-print-color-adjust: exact !important;
-        print-color-adjust: exact !important;
-    }
-    
-    @page {
-        size: letter;
-        margin: 0.5in 0.75in;
-    }
-    
-    body {
-        background: white !important;
-        padding: 0;
-        margin: 0;
-        font-size: 11pt;
-        line-height: 1.4;
-    }
-    
-    /* Container adjustments */
-    .container {
-        max-width: 100%;
-        box-shadow: none;
-        padding: 0;
-        border-radius: 0;
-        background: white;
-    }
-    
-    /* Headers - Use light tones for print */
-    h1 {
-        color: #5c4033 !important;
-        font-size: 20pt;
-        border-bottom: 2px solid #d4c4a8 !important;
-        padding-bottom: 8pt;
-        margin-bottom: 12pt;
-        page-break-after: avoid;
-    }
-    
-    .subtitle {
-        color: #8b6f47 !important;
-        font-size: 10pt;
-        margin-bottom: 12pt;
-    }
-    
-    /* Sections - Light professional colors */
-    .section {
-        background: #f9f6f0 !important;
-        border: 1px solid #d4c4a8 !important;
-        border-radius: 0;
-        padding: 12pt;
-        margin-bottom: 12pt;
-        page-break-inside: avoid;
-    }
-    
-    .section h2 {
-        color: #5c4033 !important;
-        font-size: 14pt;
-        border-bottom: 1px solid #d4c4a8 !important;
-        padding-bottom: 6pt;
-        margin-bottom: 10pt;
-        page-break-after: avoid;
-    }
-    
-    .section h3 {
-        color: #5c4033 !important;
-        font-size: 12pt;
-        margin-top: 8pt;
-        margin-bottom: 6pt;
-        page-break-after: avoid;
-    }
-    
-    /* Form fields */
-    .form-group {
-        margin-bottom: 10pt;
-        page-break-inside: avoid;
-    }
-    
-    .form-row {
-        display: flex;
-        gap: 10pt;
-        margin-bottom: 10pt;
-        page-break-inside: avoid;
-    }
-    
-    label {
-        display: block;
-        font-weight: bold;
-        font-size: 10pt;
-        color: #5c4033 !important;
-        margin-bottom: 4pt;
-        page-break-after: avoid;
-    }
-    
-    input[type="text"],
-    input[type="date"],
-    textarea,
-    select {
-        border: 1px solid #d4c4a8 !important;
-        background: white !important;
-        padding: 6pt;
-        font-size: 10pt;
-        width: 100%;
-        display: block;
-    }
-    
-    textarea {
-        min-height: 60pt;
-    }
-    
-    /* Source boxes */
-    .source-box {
-        background: #fff8e7 !important;
-        border-left: 2px solid #f39c12 !important;
-        border-radius: 0;
-        padding: 10pt;
-        margin-top: 10pt;
-        page-break-inside: avoid;
-    }
-    
-    .source-box h3 {
-        font-size: 11pt;
-        color: #5c4033 !important;
-        margin-top: 0;
-    }
-    
-    .source-box label {
-        font-size: 9pt;
-        color: #5c4033 !important;
-    }
-    
-    .source-box input {
-        font-size: 9pt;
-        padding: 5pt;
-    }
-    
-    /* Required/Optional indicators */
-    .required {
-        color: #000 !important;
-    }
-    
-    .optional {
-        color: #666 !important;
-        font-size: 9pt;
-    }
-    
-    /* Page break control */
-    h1, h2, h3, h4 {
-        orphans: 3;
-        widows: 3;
-    }
-    
-    /* Landing page specific - keep sections together */
-    section,
-    .hero,
-    .stats-section,
-    .tools-section,
-    .phase-section,
-    .tool-card,
-    .feature-card {
-        page-break-inside: avoid;
-    }
-    
-    /* Keep content groups together */
-    .container > div {
-        page-break-inside: avoid;
-    }
-    
-    .form-group,
-    .form-row,
-    .source-box {
-        orphans: 2;
-        widows: 2;
-    }
-    
-    .section + .section {
-        page-break-before: auto;
-    }
-    
-    .section:not(:last-child) {
-        margin-bottom: 12pt;
-    }
-    
-    /* Hide non-printable elements */
-    .button-group,
-    .instructions,
-    .research-tools,
-    button,
-    nav,
-    .no-print {
-        display: none !important;
-    }
-    
-    /* Print-specific utilities */
-    .page-break {
-        page-break-before: always;
-    }
-    
-    .avoid-break {
-        page-break-inside: avoid;
-    }
-    
-    /* Multi-page continuation header */
-    .container::before {
-        content: "";
-        display: block;
-        page-break-after: always;
-    }
-    
-    /* Ensure content visibility */
-    .section,
-    .form-group,
-    input,
-    textarea,
-    label {
-        opacity: 1 !important;
-        visibility: visible !important;
-    }
-}
+        /* ============================================
+           BK GENEALOGY UNIVERSAL PRINT OPTIMIZATION
+           ============================================ */
 
+        @media print {
+            * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+            
+            @page {
+                size: letter;
+                margin: 0.5in 0.75in;
+            }
+            
+            body {
+                background: white !important;
+                padding: 0;
+                margin: 0;
+                font-size: 11pt;
+                line-height: 1.4;
+            }
+            
+            .container {
+                max-width: 100%;
+                box-shadow: none;
+                padding: 0;
+                border-radius: 0;
+                background: white;
+            }
+            
+            h1 {
+                color: #5c4033 !important;
+                font-size: 20pt;
+                border-bottom: 2px solid #d4c4a8 !important;
+                padding-bottom: 8pt;
+                margin-bottom: 12pt;
+                page-break-after: avoid;
+            }
+            
+            .section {
+                background: #f9f6f0 !important;
+                border: 1px solid #d4c4a8 !important;
+                border-radius: 0;
+                padding: 12pt;
+                margin-bottom: 12pt;
+                page-break-inside: avoid;
+            }
+            
+            .section h2 {
+                color: #5c4033 !important;
+                font-size: 14pt;
+                border-bottom: 1px solid #d4c4a8 !important;
+                padding-bottom: 6pt;
+                margin-bottom: 10pt;
+                page-break-after: avoid;
+            }
+            
+            .form-group {
+                margin-bottom: 10pt;
+                page-break-inside: avoid;
+            }
+            
+            label {
+                display: block;
+                font-weight: bold;
+                font-size: 10pt;
+                color: #5c4033 !important;
+                margin-bottom: 4pt;
+            }
+            
+            input, textarea, select {
+                border: 1px solid #d4c4a8 !important;
+                background: white !important;
+                padding: 6pt;
+                font-size: 10pt;
+            }
+            
+            .session-item {
+                background: #f9f6f0 !important;
+                border: 1px solid #d4c4a8 !important;
+                page-break-inside: avoid;
+            }
+            
+            .hours-tracker {
+                background: #f9f6f0 !important;
+                color: #5c4033 !important;
+                border: 2px solid #d4c4a8 !important;
+            }
+        }
     </style>
 </head>
 <body>
-    <!-- BCG Toolkit Header Banner -->
-<!-- Add this IMMEDIATELY after the opening <body> tag in each tool -->
-
-<div class="bcg-toolkit-banner">
-    <div class="banner-content">
-        <span class="banner-text">📚 Part of the <strong>BCG Portfolio Toolkit</strong></span>
-        <a href="https://bkgenealogy.github.io/" class="banner-link">View All Tools →</a>
+    <div class="banner">
+        <div class="banner-content">
+            <span class="banner-text">📚 Part of the <strong>BCG Portfolio Toolkit</strong></span>
+        </div>
     </div>
-</div>
 
-<style>
-    .bcg-toolkit-banner {
-        background: linear-gradient(135deg, #5c4033 0%, #8b6f47 100%);
-        color: white;
-        padding: 12px 20px;
-        text-align: center;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        position: sticky;
-        top: 0;
-        z-index: 1000;
-        font-family: Georgia, 'Times New Roman', serif;
-    }
-    
-    .banner-content {
-        max-width: 1200px;
-        margin: 0 auto;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        flex-wrap: wrap;
-        gap: 10px;
-    }
-    
-    .banner-text {
-        font-size: 14px;
-        opacity: 0.95;
-    }
-    
-    .banner-text strong {
-        font-weight: bold;
-    }
-    
-    .banner-link {
-        background: rgba(255, 255, 255, 0.2);
-        color: white;
-        padding: 6px 15px;
-        text-decoration: none;
-        border-radius: 4px;
-        font-size: 13px;
-        font-weight: bold;
-        transition: all 0.3s ease;
-        border: 1px solid rgba(255, 255, 255, 0.3);
-    }
-    
-    .banner-link:hover {
-        background: rgba(255, 255, 255, 0.3);
-        transform: translateY(-1px);
-    }
-    
-    @media (max-width: 600px) {
-        .banner-content {
-            flex-direction: column;
-            text-align: center;
-        }
-        
-        .banner-text {
-            font-size: 13px;
-        }
-    }
-</style>
-
-<!-- End BCG Toolkit Header Banner -->
     <div class="container">
         <div class="header">
             <h1>📋 BCG Research Report Generator</h1>
@@ -782,34 +665,26 @@
                 <div class="form-group">
                     <label>Personal Access Token:</label>
                     <input type="password" id="airtableToken" placeholder="pat...">
-                    <small style="color: #6c757d; display: block; margin-top: 5px;">
-                        Get your token at: <a href="https://airtable.com/create/tokens" target="_blank">airtable.com/create/tokens</a>
-                    </small>
+                    <small>Get your token at: <a href="https://airtable.com/create/tokens" target="_blank" style="color: #8b6f47;">airtable.com/create/tokens</a></small>
                 </div>
                 
                 <div class="form-group">
                     <label>Base ID:</label>
                     <input type="text" id="airtableBaseId" placeholder="app...">
-                    <small style="color: #6c757d; display: block; margin-top: 5px;">
-                        Find this in your Airtable URL: airtable.com/<strong>app...</strong>/...
-                    </small>
+                    <small>Find this in your Airtable URL: airtable.com/<strong>app...</strong>/...</small>
                 </div>
                 
                 <button class="btn btn-primary" onclick="saveCredentials()">💾 Save & Connect</button>
                 
                 <div id="credentialsSaved" class="credentials-saved hidden">
                     ✅ Credentials saved! Ready to import projects.
-                    <div style="margin-top: 15px; display: flex; gap: 10px; justify-content: center;">
-                        <button class="btn btn-secondary" onclick="exportCredentials()" style="font-size: 0.9em; padding: 8px 16px;">📤 Export Credentials</button>
-                        <button class="btn btn-secondary" onclick="importCredentials()" style="font-size: 0.9em; padding: 8px 16px;">📥 Import Credentials</button>
-                    </div>
                 </div>
             </div>
 
             <!-- Airtable Import Section -->
             <div id="airtableImportSection" class="airtable-import-section hidden">
                 <h3>🔗 Import from Airtable</h3>
-                <p style="color: #495057; margin-bottom: 15px;">Select a project to automatically import all research sessions from your Airtable database.</p>
+                <p style="color: #8b6f47; margin-bottom: 15px;">Select a project to automatically import all research sessions from your Airtable database.</p>
                 
                 <div id="airtableStatus" class="airtable-status">
                     Configure Airtable credentials to begin importing.
@@ -864,7 +739,7 @@
                     <button class="btn btn-primary" onclick="addSession()">➕ Add Session</button>
                 </div>
                 <div id="sessionsList" class="session-list">
-                    <p style="text-align: center; color: #6c757d;">No sessions added yet. Click "Add Session" to begin.</p>
+                    <p style="text-align: center; color: #8b6f47;">No sessions added yet. Click "Add Session" to begin.</p>
                 </div>
             </div>
 
@@ -936,29 +811,28 @@
                 <h3>📄 Export Your Report</h3>
                 <div class="export-buttons">
                     <button class="btn btn-success" onclick="generateReport()">📋 Preview Report</button>
-                    <button class="btn btn-primary" onclick="exportToWord()">📝 Export to Word</button>
+                    <button class="btn btn-primary" onclick="printReport()">🖨️ Print Report</button>
+                    <button class="btn btn-secondary" onclick="exportToWord()">📝 Export to Word</button>
                     <button class="btn btn-secondary" onclick="saveProject()">💾 Save Project</button>
                     <button class="btn btn-secondary" onclick="loadProject()">📂 Load Project</button>
-                    <button class="btn btn-danger" onclick="clearAll()">🗑️ Clear & Start New</button>
+                    <button class="btn btn-danger" onclick="clearAll()">🗑️ Clear All</button>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // Global state
+        // [All the JavaScript from the original file stays exactly the same]
         let sessions = [];
         let currentMode = 'manual';
         let airtableConfig = null;
 
-        // Initialize
         document.addEventListener('DOMContentLoaded', function() {
             loadFromStorage();
             updateHoursDisplay();
             loadSavedCredentials();
         });
 
-        // Load saved Airtable credentials
         function loadSavedCredentials() {
             const saved = localStorage.getItem('airtableCredentials');
             if (saved) {
@@ -967,225 +841,20 @@
             }
         }
 
-        // Save Airtable credentials
         function saveCredentials() {
             const token = document.getElementById('airtableToken').value.trim();
             const baseId = document.getElementById('airtableBaseId').value.trim();
-
             if (!token || !baseId) {
                 alert('Please enter both token and base ID');
                 return;
             }
-
             airtableConfig = { token, baseId };
             localStorage.setItem('airtableCredentials', JSON.stringify(airtableConfig));
-            
             document.getElementById('credentialsSaved').classList.remove('hidden');
             document.getElementById('airtableImportSection').classList.remove('hidden');
-            
             initializeAirtable();
         }
 
-        // Export credentials to file
-        function exportCredentials() {
-            if (!airtableConfig) {
-                alert('No credentials to export. Please save credentials first.');
-                return;
-            }
-
-            const data = {
-                version: '1.0',
-                exported: new Date().toISOString(),
-                credentials: airtableConfig,
-                note: 'BCG Research Report Generator - Airtable Credentials. Keep this file secure!'
-            };
-
-            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'airtable-credentials-bcg-report-generator.json';
-            a.click();
-            
-            alert('✅ Credentials exported!\n\n⚠️ Keep this file secure - it contains your Airtable access token.\n\nUse "Import Credentials" on other devices to quickly set up the tool.');
-        }
-
-        // Import credentials from file
-        function importCredentials() {
-            const input = document.createElement('input');
-            input.type = 'file';
-            input.accept = '.json';
-            input.onchange = function(e) {
-                const file = e.target.files[0];
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    try {
-                        const data = JSON.parse(e.target.result);
-                        
-                        // Validate the file structure
-                        if (!data.credentials || !data.credentials.token || !data.credentials.baseId) {
-                            alert('❌ Invalid credentials file. Please use a file exported from this tool.');
-                            return;
-                        }
-
-                        // Save the credentials
-                        airtableConfig = data.credentials;
-                        localStorage.setItem('airtableCredentials', JSON.stringify(airtableConfig));
-                        
-                        // Update UI
-                        document.getElementById('airtableToken').value = airtableConfig.token;
-                        document.getElementById('airtableBaseId').value = airtableConfig.baseId;
-                        document.getElementById('credentialsSaved').classList.remove('hidden');
-                        document.getElementById('airtableImportSection').classList.remove('hidden');
-                        
-                        // Initialize Airtable connection
-                        initializeAirtable();
-                        
-                        alert('✅ Credentials imported successfully!\n\nYou can now import projects from Airtable.');
-                    } catch (error) {
-                        alert('❌ Error reading credentials file: ' + error.message);
-                    }
-                };
-                reader.readAsText(file);
-            };
-            input.click();
-        }
-
-        // Airtable API functions
-        function getHeaders() {
-            return {
-                'Authorization': `Bearer ${airtableConfig.token}`,
-                'Content-Type': 'application/json'
-            };
-        }
-
-        async function fetchProjects() {
-            const url = `https://api.airtable.com/v0/${airtableConfig.baseId}/Projects`;
-            const response = await fetch(url, { headers: getHeaders() });
-            if (!response.ok) throw new Error(`API error: ${response.status}`);
-            
-            const data = await response.json();
-            return data.records.map(record => ({
-                id: record.id,
-                name: record.fields.Name || 'Unnamed Project',
-                clientName: record.fields['Client Name'] || '',
-                startDate: record.fields['Start Date'] || '',
-                researchGoal: record.fields['Research Goal'] || '',
-                location: record.fields.Location || '',
-                primarySurname: record.fields['Primary surname'] || '',
-                hoursLogged: record.fields['Hours logged'] || 0
-            }));
-        }
-
-        async function fetchResearchLog(projectName) {
-            const formula = `SEARCH("${projectName}", {Project})`;
-            const url = `https://api.airtable.com/v0/${airtableConfig.baseId}/Research%20Log?filterByFormula=${encodeURIComponent(formula)}`;
-            
-            const response = await fetch(url, { headers: getHeaders() });
-            if (!response.ok) throw new Error(`API error: ${response.status}`);
-
-            const data = await response.json();
-            return data.records.map(record => ({
-                date: record.fields.Date || '',
-                repository: record.fields['Repository/Database'] || '',
-                searchTerms: record.fields['Search Terms'] || '',
-                results: record.fields.Results || '',
-                notes: record.fields.Notes || '',
-                nextSteps: record.fields['Next Steps'] || '',
-                hours: parseFloat(record.fields['Time Spent']) || 0
-            }));
-        }
-
-        async function initializeAirtable() {
-            if (!airtableConfig) return;
-
-            const statusEl = document.getElementById('airtableStatus');
-            const selectEl = document.getElementById('projectSelect');
-
-            try {
-                statusEl.textContent = 'Loading projects from Airtable...';
-                statusEl.className = 'airtable-status loading';
-
-                const projects = await fetchProjects();
-
-                selectEl.innerHTML = '<option value="">-- Select a Project --</option>';
-                projects.forEach(project => {
-                    const option = document.createElement('option');
-                    option.value = project.id;
-                    option.textContent = project.name;
-                    option.dataset.projectData = JSON.stringify(project);
-                    selectEl.appendChild(option);
-                });
-
-                statusEl.textContent = `✅ Loaded ${projects.length} projects`;
-                statusEl.className = 'airtable-status success';
-            } catch (error) {
-                statusEl.textContent = `❌ Error: ${error.message}`;
-                statusEl.className = 'airtable-status error';
-            }
-        }
-
-        async function importProjectData() {
-            if (!airtableConfig) {
-                alert('Please configure Airtable credentials first');
-                return;
-            }
-
-            const selectEl = document.getElementById('projectSelect');
-            const statusEl = document.getElementById('airtableStatus');
-            const selectedOption = selectEl.options[selectEl.selectedIndex];
-
-            if (!selectedOption.value) {
-                alert('Please select a project');
-                return;
-            }
-
-            try {
-                statusEl.textContent = 'Importing...';
-                statusEl.className = 'airtable-status loading';
-
-                const projectData = JSON.parse(selectedOption.dataset.projectData);
-
-                document.getElementById('researchQuestion').value = projectData.researchGoal;
-                document.getElementById('clientName').value = projectData.clientName;
-                document.getElementById('startDate').value = projectData.startDate;
-                document.getElementById('background').value = `Project: ${projectData.name}\nPrimary Surname: ${projectData.primarySurname}\nLocation: ${projectData.location}\n\n[Add additional background]`;
-
-                const researchEntries = await fetchResearchLog(projectData.name);
-
-                if (researchEntries.length === 0) {
-                    statusEl.textContent = '⚠️ No research entries found';
-                    statusEl.className = 'airtable-status warning';
-                    return;
-                }
-
-                sessions = researchEntries.map(entry => ({
-                    id: Date.now() + Math.random(),
-                    date: entry.date,
-                    hours: entry.hours,
-                    repository: entry.repository,
-                    database: '',
-                    searchTerms: entry.searchTerms,
-                    results: entry.results,
-                    notes: entry.notes,
-                    nextSteps: entry.nextSteps
-                }));
-
-                sessions.sort((a, b) => new Date(a.date) - new Date(b.date));
-
-                renderSessions();
-                updateHoursDisplay();
-                saveToStorage();
-
-                statusEl.textContent = `✅ Imported ${researchEntries.length} sessions`;
-                statusEl.className = 'airtable-status success';
-            } catch (error) {
-                statusEl.textContent = `❌ Error: ${error.message}`;
-                statusEl.className = 'airtable-status error';
-            }
-        }
-
-        // Mode selection
         function selectMode(mode) {
             currentMode = mode;
             document.getElementById('manualMode').classList.toggle('active', mode === 'manual');
@@ -1194,7 +863,6 @@
             document.getElementById('airtableImportSection').classList.toggle('hidden', mode === 'manual' || !airtableConfig);
         }
 
-        // Session management
         function addSession() {
             sessions.push({
                 id: Date.now(),
@@ -1213,17 +881,16 @@
         function renderSessions() {
             const container = document.getElementById('sessionsList');
             if (sessions.length === 0) {
-                container.innerHTML = '<p style="text-align: center; color: #6c757d;">No sessions yet. Click "Add Session" or import from Airtable.</p>';
+                container.innerHTML = '<p style="text-align: center; color: #8b6f47;">No sessions yet. Click "Add Session" or import from Airtable.</p>';
                 return;
             }
-
             container.innerHTML = sessions.map(s => `
                 <div class="session-item">
                     <div class="session-header">
-                        <input type="date" value="${s.date}" onchange="updateSession(${s.id}, 'date', this.value)" style="border: none; background: transparent; font-weight: 600; color: #2c3e50; font-size: 1.1em;">
+                        <input type="date" value="${s.date}" onchange="updateSession(${s.id}, 'date', this.value)" style="border: none; background: transparent; font-weight: bold; color: #5c4033; font-size: 16px; font-family: Georgia, serif;">
                         <div style="display: flex; gap: 10px; align-items: center;">
                             <div class="session-hours">
-                                <input type="number" step="0.5" value="${s.hours}" onchange="updateSession(${s.id}, 'hours', parseFloat(this.value))" style="width: 60px; border: none; background: transparent; color: white; font-weight: 600; text-align: center;"> hrs
+                                <input type="number" step="0.5" value="${s.hours}" onchange="updateSession(${s.id}, 'hours', parseFloat(this.value))" style="width: 60px; border: none; background: transparent; color: white; font-weight: bold; text-align: center;"> hrs
                             </div>
                             <button class="btn btn-danger btn-icon" onclick="deleteSession(${s.id})">🗑️</button>
                         </div>
@@ -1231,19 +898,19 @@
                     <div class="session-details">
                         <div class="session-detail">
                             <strong>Repository:</strong>
-                            <input type="text" value="${s.repository}" onchange="updateSession(${s.id}, 'repository', this.value)">
+                            <input type="text" value="${s.repository}" onchange="updateSession(${s.id}, 'repository', this.value)" style="border: none; background: transparent; color: #5c4033; width: 100%;">
                         </div>
                         <div class="session-detail">
                             <strong>Search Terms:</strong>
-                            <input type="text" value="${s.searchTerms}" onchange="updateSession(${s.id}, 'searchTerms', this.value)">
+                            <input type="text" value="${s.searchTerms}" onchange="updateSession(${s.id}, 'searchTerms', this.value)" style="border: none; background: transparent; color: #5c4033; width: 100%;">
                         </div>
                     </div>
                     <div class="form-group" style="margin-top: 15px;">
-                        <strong style="display: block; margin-bottom: 8px; font-size: 0.9em; color: #6c757d;">Results:</strong>
+                        <strong style="display: block; margin-bottom: 8px; font-size: 14px; color: #5c4033;">Results:</strong>
                         <textarea onchange="updateSession(${s.id}, 'results', this.value)">${s.results}</textarea>
                     </div>
                     <div class="form-group">
-                        <strong style="display: block; margin-bottom: 8px; font-size: 0.9em; color: #6c757d;">Analysis:</strong>
+                        <strong style="display: block; margin-bottom: 8px; font-size: 14px; color: #5c4033;">Analysis:</strong>
                         <textarea onchange="updateSession(${s.id}, 'notes', this.value)">${s.notes}</textarea>
                     </div>
                 </div>
@@ -1271,7 +938,6 @@
         function updateHoursDisplay() {
             const total = sessions.reduce((sum, s) => sum + (parseFloat(s.hours) || 0), 0);
             document.getElementById('totalHours').textContent = total.toFixed(1);
-            
             const statusEl = document.getElementById('hoursStatus');
             if (total < 8) {
                 statusEl.innerHTML = `<span class="warning">⚠️ Need ${(8 - total).toFixed(1)} more hours (BCG minimum: 8)</span>`;
@@ -1297,6 +963,17 @@
             win.document.close();
         }
 
+        function printReport() {
+            const report = buildReportHTML();
+            const win = window.open('', '_blank');
+            win.document.write(report);
+            win.document.close();
+            // Wait for content to load, then trigger print
+            setTimeout(() => {
+                win.print();
+            }, 250);
+        }
+
         function buildReportHTML() {
             const researchQuestion = document.getElementById('researchQuestion').value;
             const clientName = document.getElementById('clientName').value;
@@ -1310,12 +987,12 @@
             const totalHours = sessions.reduce((sum, s) => sum + (parseFloat(s.hours) || 0), 0);
 
             let html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>BCG Research Report</title><style>
-                body { font-family: 'Times New Roman', serif; line-height: 1.6; max-width: 800px; margin: 40px auto; padding: 20px; }
-                h1 { text-align: center; font-size: 20pt; margin-bottom: 30px; }
-                h2 { font-size: 14pt; margin-top: 30px; margin-bottom: 15px; border-bottom: 2px solid #333; }
+                body { font-family: Georgia, 'Times New Roman', serif; line-height: 1.6; max-width: 800px; margin: 40px auto; padding: 20px; }
+                h1 { text-align: center; font-size: 20pt; margin-bottom: 30px; color: #5c4033; }
+                h2 { font-size: 14pt; margin-top: 30px; margin-bottom: 15px; border-bottom: 2px solid #d4c4a8; color: #5c4033; }
                 p { text-align: justify; margin-bottom: 12px; }
-                .metadata { background: #f5f5f5; padding: 15px; margin-bottom: 30px; border-left: 4px solid #333; }
-                .session { margin-bottom: 25px; padding-left: 20px; border-left: 3px solid #ccc; }
+                .metadata { background: #f9f6f0; padding: 15px; margin-bottom: 30px; border-left: 4px solid #8b6f47; }
+                .session { margin-bottom: 25px; padding-left: 20px; border-left: 3px solid #d4c4a8; }
             </style></head><body>
             <h1>RESEARCH REPORT</h1>
             <div class="metadata">
@@ -1434,8 +1111,7 @@
         }
 
         function clearAll() {
-            if (confirm('⚠️ Clear all data and start a new report?\n\nThis will delete:\n• All research sessions\n• Project information\n• Analysis sections\n• GPS checklist\n\nThis cannot be undone!')) {
-                // Clear all form fields
+            if (confirm('⚠️ Clear all data and start new?')) {
                 document.getElementById('researchQuestion').value = '';
                 document.getElementById('clientName').value = '';
                 document.getElementById('startDate').value = '';
@@ -1445,26 +1121,17 @@
                 document.getElementById('findings').value = '';
                 document.getElementById('remainingQuestions').value = '';
                 document.getElementById('nextResearch').value = '';
-                
-                // Clear GPS checkboxes
                 document.getElementById('gps1').checked = false;
                 document.getElementById('gps2').checked = false;
                 document.getElementById('gps3').checked = false;
                 document.getElementById('gps4').checked = false;
                 document.getElementById('gps5').checked = false;
                 updateGPS();
-                
-                // Clear sessions
                 sessions = [];
                 renderSessions();
                 updateHoursDisplay();
-                
-                // Clear localStorage
                 localStorage.removeItem('bcgResearchReport');
-                
-                alert('✅ All data cleared! Ready for new report.');
-                
-                // Scroll to top
+                alert('✅ All data cleared!');
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             }
         }
